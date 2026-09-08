@@ -4,7 +4,6 @@ import google.generativeai as genai
 from threading import Thread
 from flask import Flask
 
-# Tạo web server nhỏ để Render kiểm tra bot còn sống
 app = Flask(__name__)
 
 @app.route('/')
@@ -15,10 +14,8 @@ def run_web():
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
 
-# Khởi chạy web server chạy nền
 Thread(target=run_web).start()
 
-# Lấy Token và API Key từ biến môi trường
 DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
@@ -38,7 +35,6 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    # Trả lời khi được tag hoặc khi nhắn tin riêng (DM)
     if client.user in message.mentions or isinstance(message.channel, discord.DMChannel):
         prompt = message.content.replace(f'<@{client.user.id}>', '').strip()
         if not prompt:
@@ -53,7 +49,6 @@ async def on_message(message):
                     reply_text = reply_text[:1996] + "..."
                 await message.reply(reply_text)
             except Exception as e:
-                # Dòng này sẽ in ra nguyên nhân gốc rễ nếu Gemini từ chối trả lời
                 await message.reply(f"Lỗi AI: {e}")
                 print(f"Error: {e}")
 
