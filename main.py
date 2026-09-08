@@ -20,7 +20,7 @@ DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 intents = discord.Intents.default()
 intents.message_content = True
