@@ -23,8 +23,7 @@ DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
 genai.configure(api_key=GEMINI_API_KEY)
-instruction = "Bạn là trợ lý ảo thân thiện của server Honey Bee Hive. Hãy trả lời ngắn gọn, nhiệt tình, có icon sinh động bằng tiếng Việt."
-model = genai.GenerativeModel('gemini-1.5-flash', system_instruction=instruction)
+model = genai.GenerativeModel('gemini-pro')
 
 intents = discord.Intents.default()
 intents.message_content = True
