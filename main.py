@@ -24,7 +24,7 @@ GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
 genai.configure(api_key=GEMINI_API_KEY)
 instruction = "Bạn là trợ lý ảo thân thiện của server Honey Bee Hive. Hãy trả lời ngắn gọn, nhiệt tình, có icon sinh động bằng tiếng Việt."
-model = genai.GenerativeModel('gemini-1.5-flash', system_instruction=instruction)
+model = genai.GenerativeModel('gemini-pro')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -53,8 +53,8 @@ async def on_message(message):
                 if len(reply_text) > 2000:
                     reply_text = reply_text[:1996] + "..."
                 await message.reply(reply_text)
-            except Exception as e:
-                await message.reply("Hệ thống AI đang bận một chút, bạn thử lại sau vài giây nhé!")
+                        except Exception as e:
+                await message.reply(f"Lỗi AI: {e}")
                 print(f"Error: {e}")
 
 if DISCORD_TOKEN:
