@@ -18,9 +18,11 @@ Thread(target=run_web).start()
 
 DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
-
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-3.6-flash')
+
+# 1. ÉP TRẢ LỜI NGẮN: Chỉnh sửa lại yêu cầu cốt lõi của bot
+instruction = "Bạn là AI hỗ trợ của server Honey Bee Hive. BẮT BUỘC TRẢ LỜI CỰC KỲ NGẮN GỌN (dưới 30 chữ), đi thẳng vào vấn đề, không giải thích dài dòng."
+model = genai.GenerativeModel('gemini-3.6-flash', system_instruction=instruction)
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -38,18 +40,16 @@ async def on_message(message):
     if client.user in message.mentions or isinstance(message.channel, discord.DMChannel):
         prompt = message.content.replace(f'<@{client.user.id}>', '').strip()
         if not prompt:
-            await message.reply("Chào bạn! Bạn cần mình giúp gì nào?")
+            await message.reply("Có mình đây!")
             return
 
         async with message.channel.typing():
             try:
-                response = model.generate_content(prompt)
-                reply_text = response.text
-                if len(reply_text) > 2000:
-                    reply_text = reply_text[:1996] + "..."
-                await message.reply(reply_text)
+                # 2. XỬ LÝ ĐA LUỒNG: Dùng hàm async để bot không bị treo khi nhiều người tag
+                response = await model.generate_content_async(prompt)
+                await message.reply(response.text[:1996])
             except Exception as e:
-                await message.reply(f"Lỗi AI: {e}")
+                await message.reply("Đang bận xử lý dữ liệu, bạn thử lại sau 3 giây nhé!")
                 print(f"Error: {e}")
 
 if DISCORD_TOKEN:
