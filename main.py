@@ -49,8 +49,8 @@ async def on_message(message):
                 response = await model.generate_content_async(prompt)
                 await message.reply(response.text[:1996])
             except Exception as e:
-                await message.reply("Đang bận xử lý dữ liệu, bạn thử lại sau 3 giây nhé!")
-                print(f"Error: {e}")
+                await message.reply(f"Mã lỗi gốc: {e}")
+
 
 if DISCORD_TOKEN:
     client.run(DISCORD_TOKEN)
