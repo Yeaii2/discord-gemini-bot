@@ -4,6 +4,7 @@ import google.generativeai as genai
 from threading import Thread
 from flask import Flask
 import time
+import random
 
 app = Flask(__name__)
 
@@ -18,19 +19,22 @@ def run_web():
 Thread(target=run_web).start()
 
 DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
-genai.configure(api_key=GEMINI_API_KEY)
+
+# Gom tất cả các Key có trên Render vào một danh sách
+api_keys = []
+for key_name in ['GEMINI_KEY_1', 'GEMINI_KEY_2', 'GEMINI_KEY_3', 'GEMINI_API_KEY']:
+    key_value = os.environ.get(key_name)
+    if key_value:
+        api_keys.append(key_value)
 
 instruction = "Bạn là AI hỗ trợ của server Honey Bee Hive. BẮT BUỘC TRẢ LỜI CỰC KỲ NGẮN GỌN (dưới 30 chữ), đi thẳng vào vấn đề, không giải thích dài dòng."
-model = genai.GenerativeModel('gemini-3.6-flash', system_instruction=instruction)
 
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 
-# Tạo từ điển lưu thời gian nhắn tin của từng người
 user_cooldowns = {}
-COOLDOWN_TIME = 60  # Đặt thời gian chờ là 60 giây
+COOLDOWN_TIME = 60  
 
 @client.event
 async def on_ready():
@@ -45,7 +49,6 @@ async def on_message(message):
         user_id = message.author.id
         current_time = time.time()
         
-        # Kiểm tra xem người dùng đã hết thời gian chờ chưa
         if user_id in user_cooldowns:
             time_passed = current_time - user_cooldowns[user_id]
             if time_passed < COOLDOWN_TIME:
@@ -58,11 +61,16 @@ async def on_message(message):
             await message.reply("Có mình đây!")
             return
 
-        # Cập nhật lại mốc thời gian người này vừa nhắn
         user_cooldowns[user_id] = current_time
 
         async with message.channel.typing():
             try:
+                # Bốc ngẫu nhiên 1 Key trong danh sách để né giới hạn 20 lượt/phút
+                if api_keys:
+                    selected_key = random.choice(api_keys)
+                    genai.configure(api_key=selected_key)
+                
+                model = genai.GenerativeModel('gemini-3.6-flash', system_instruction=instruction)
                 response = await model.generate_content_async(prompt)
                 await message.reply(response.text[:1996])
             except Exception as e:
