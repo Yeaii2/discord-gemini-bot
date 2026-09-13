@@ -20,13 +20,14 @@ Thread(target=run_web).start()
 
 DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
 
-# Gom tất cả các Key có trên Render vào một danh sách
+# Gom tất cả API Keys có trên Render vào một danh sách để xoay vòng
 api_keys = []
 for key_name in ['GEMINI_KEY_1', 'GEMINI_KEY_2', 'GEMINI_KEY_3', 'GEMINI_API_KEY']:
     key_value = os.environ.get(key_name)
     if key_value:
         api_keys.append(key_value)
 
+# Ép bot trả lời ngắn gọn
 instruction = "Bạn là AI hỗ trợ của server Honey Bee Hive. BẮT BUỘC TRẢ LỜI CỰC KỲ NGẮN GỌN (dưới 30 chữ), đi thẳng vào vấn đề, không giải thích dài dòng."
 
 intents = discord.Intents.default()
@@ -38,7 +39,10 @@ COOLDOWN_TIME = 60
 
 @client.event
 async def on_ready():
-    print(f'Bot {client.user} đã sẵn sàng phục vụ!')
+    # Lệnh hiển thị trạng thái đang chơi GTA 6
+    activity = discord.Game(name="Grand Theft Auto VI")
+    await client.change_presence(status=discord.Status.online, activity=activity)
+    print(f'Bot {client.user} đã sẵn sàng phục vụ và đang chơi GTA 6!')
 
 @client.event
 async def on_message(message):
@@ -49,6 +53,7 @@ async def on_message(message):
         user_id = message.author.id
         current_time = time.time()
         
+        # Chặn spam (giới hạn 60 giây mỗi người)
         if user_id in user_cooldowns:
             time_passed = current_time - user_cooldowns[user_id]
             if time_passed < COOLDOWN_TIME:
@@ -65,7 +70,7 @@ async def on_message(message):
 
         async with message.channel.typing():
             try:
-                # Bốc ngẫu nhiên 1 Key trong danh sách để né giới hạn 20 lượt/phút
+                # Chọn ngẫu nhiên 1 API Key để né giới hạn 429
                 if api_keys:
                     selected_key = random.choice(api_keys)
                     genai.configure(api_key=selected_key)
