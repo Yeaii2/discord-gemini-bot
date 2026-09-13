@@ -39,10 +39,10 @@ COOLDOWN_TIME = 60
 
 @client.event
 async def on_ready():
-    # Lệnh hiển thị trạng thái đang chơi GTA 6
-    activity = discord.Game(name="Grand Theft Auto VI")
+    # Hiển thị trạng thái Streaming màu tím kèm link
+    activity = discord.Streaming(name="Grand Theft Auto VI", url="https://www.twitch.tv/rockstargames")
     await client.change_presence(status=discord.Status.online, activity=activity)
-    print(f'Bot {client.user} đã sẵn sàng phục vụ và đang chơi GTA 6!')
+    print(f'Bot {client.user} đã sẵn sàng phục vụ!')
 
 @client.event
 async def on_message(message):
