@@ -27,8 +27,8 @@ for key_name in ['GEMINI_KEY_1', 'GEMINI_KEY_2', 'GEMINI_KEY_3', 'GEMINI_API_KEY
     if key_value:
         api_keys.append(key_value)
 
-# Ép bot trả lời ngắn gọn
-instruction = "Bạn là AI hỗ trợ của server Honey Bee Hive. BẮT BUỘC TRẢ LỜI CỰC KỲ NGẮN GỌN (dưới 30 chữ), đi thẳng vào vấn đề, không giải thích dài dòng."
+# Ép bot trả lời ngắn gọn và Bơm kiến thức chuyên gia về UP Cloud
+instruction = """Bạn là AI hỗ trợ của Honey Bee Hive, chuyên gia về UP Cloud Gaming (App Android chơi game PC/Console trên điện thoại, hỗ trợ game Steam/Mod, chơi mượt với tay cầm, và HIỆN ĐÃ MIỄN PHÍ KHÔNG GIỚI HẠN THỜI GIAN). BẮT BUỘC TRẢ LỜI CỰC KỲ NGẮN GỌN (dưới 30 chữ), đi thẳng vào vấn đề."""
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -39,10 +39,10 @@ COOLDOWN_TIME = 60
 
 @client.event
 async def on_ready():
-    # Hiển thị trạng thái Streaming màu tím kèm link
-    activity = discord.Streaming(name="Grand Theft Auto VI", url="https://www.twitch.tv/rockstargames")
+    # Lệnh hiển thị trạng thái đang chơi GTA 6
+    activity = discord.Game(name="Grand Theft Auto VI")
     await client.change_presence(status=discord.Status.online, activity=activity)
-    print(f'Bot {client.user} đã sẵn sàng phục vụ!')
+    print(f'Bot {client.user} đã sẵn sàng phục vụ và đang chơi GTA 6!')
 
 @client.event
 async def on_message(message):
@@ -81,7 +81,7 @@ async def on_message(message):
             except Exception as e:
                 error_msg = str(e)
                 if "429" in error_msg or "Quota" in error_msg:
-                    await message.reply("🐝 Ui chà, nhiều bạn gọi cùng lúc quá hệ thống xử lý không kịp! Mọi người đợi khoảng 1 phút rồi nhắn lại cho mình nha.")
+                    await message.reply("🐝 Ui chà, nhiều bạn gọi cùng lúc quá hệ thống xử lý không kịp! Mọi người đợi khoảng 1 phút rồi nhắn lại nha.")
                 else:
                     await message.reply("🐝 Mình đang khởi động lại dữ liệu một chút, bạn thử lại sau 3 giây nhé!")
                 print(f"Error: {e}")
